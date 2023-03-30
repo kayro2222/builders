@@ -1,10 +1,10 @@
 import React, { createRef, useEffect } from 'react'
-import { Splash } from './src/pages'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
 import { Platform, PermissionsAndroid } from 'react-native'
 import Geolocation from '@react-native-community/geolocation'
-import { RootStackParamList } from 'app/core/navigation/types'
+import { RootStackParamList } from '@app/core/navigation/types'
+import { Routes } from '@app/core/navigation'
 
 const App = (): JSX.Element => {
   const navigationRef = createRef<NavigationContainerRef<RootStackParamList>>()
@@ -43,9 +43,7 @@ const App = (): JSX.Element => {
   return (
     <SafeAreaProvider>
       <NavigationContainer ref={navigationRef}>
-        {/* <Home /> */}
-
-        <Splash />
+        <Routes />
       </NavigationContainer>
     </SafeAreaProvider>
   )

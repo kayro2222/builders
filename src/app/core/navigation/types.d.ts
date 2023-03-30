@@ -4,6 +4,7 @@ export type RootStackParamList = {
   Home: undefined
   Weather: undefined
   WeatherDetail: undefined
+  Splash: undefined
 }
 
 export type EventParams = RouteProp<RootStackParamList, 'Home'>
