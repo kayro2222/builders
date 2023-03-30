@@ -1,114 +1,52 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { createRef, useEffect } from 'react'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
+import { Platform, PermissionsAndroid } from 'react-native'
+import Geolocation from '@react-native-community/geolocation'
+import { RootStackParamList } from '@app/core/navigation/types'
+import { Routes } from '@app/core/navigation'
 
-import React from 'react'
-import type { PropsWithChildren } from 'react'
-import {
-	SafeAreaView,
-	ScrollView,
-	StatusBar,
-	StyleSheet,
-	Text,
-	useColorScheme,
-	View,
-} from 'react-native'
+const App = (): JSX.Element => {
+  const navigationRef = createRef<NavigationContainerRef<RootStackParamList>>()
 
-import {
-	Colors,
-	DebugInstructions,
-	Header,
-	LearnMoreLinks,
-	ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen'
+  useEffect(() => {
+    if (Platform.OS === 'ios') {
+      Geolocation.requestAuthorization()
+    } else {
+      const requestLocationPermission = async () => {
+        const grantedCoarseLocation = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+          {
+            title: 'Location Access Permission',
+            message: 'This application requires your location.',
+            buttonNeutral: 'Ask me later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        )
+        if (grantedCoarseLocation !== PermissionsAndroid.RESULTS.GRANTED) {
+          console.error('Request for location permission was denied by user')
+        }
+      }
+      requestLocationPermission()
+    }
 
-type SectionProps = PropsWithChildren<{
-  title: string
-}>
+    // const getLocation = () => {
+    //   Geolocation.getCurrentPosition(
+    //     () => {},
+    //     (error) => console.error(error.message),
+    //     { enableHighAccuracy: true, timeout: 10000, maximumAge: 3000 },
+    //   )
+    // }
+  }, [])
 
-function Section({ children, title }: SectionProps): JSX.Element {
-	const isDarkMode = useColorScheme() === 'dark'
-	return (
-		<View style={styles.sectionContainer}>
-			<Text
-				style={[
-					styles.sectionTitle,
-					{
-						color: isDarkMode ? Colors.white : Colors.black,
-					},
-				]}>
-				{title}
-			</Text>
-			<Text
-				style={[
-					styles.sectionDescription,
-					{
-						color: isDarkMode ? Colors.light : Colors.dark,
-					},
-				]}>
-				{children}
-			</Text>
-		</View>
-	)
+  return (
+    <SafeAreaProvider>
+      <NavigationContainer ref={navigationRef}>
+        <Routes />
+      </NavigationContainer>
+    </SafeAreaProvider>
+  )
 }
 
-function App(): JSX.Element {
-	const isDarkMode = useColorScheme() === 'dark'
-
-	const backgroundStyle = {
-		backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-	}
-
-	return (
-		<SafeAreaView style={backgroundStyle}>
-			<StatusBar
-				barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-				backgroundColor={backgroundStyle.backgroundColor}
-			/>
-			<ScrollView contentInsetAdjustmentBehavior='automatic' style={backgroundStyle}>
-				<Header />
-				<View
-					style={{
-						backgroundColor: isDarkMode ? Colors.black : Colors.white,
-					}}>
-					<Section title='Step One'>
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this screen and then come
-            back to see your edits.
-					</Section>
-					<Section title='See Your Changes'>
-						<ReloadInstructions />
-					</Section>
-					<Section title='Debug'>
-						<DebugInstructions />
-					</Section>
-					<Section title='Learn More'>Read the docs to discover what to do next:</Section>
-					<LearnMoreLinks />
-				</View>
-			</ScrollView>
-		</SafeAreaView>
-	)
-}
-
-const styles = StyleSheet.create({
-	sectionContainer: {
-		marginTop: 32,
-		paddingHorizontal: 24,
-	},
-	sectionTitle: {
-		fontSize: 24,
-		fontWeight: '600',
-	},
-	sectionDescription: {
-		marginTop: 8,
-		fontSize: 18,
-		fontWeight: '400',
-	},
-	highlight: {
-		fontWeight: '700',
-	},
-})
-
-export default App
+export { App }

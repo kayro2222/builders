@@ -1,7 +1,8 @@
 import React from 'react'
+import { Text } from 'react-native'
 
 const Home = (): JSX.Element => {
-  return <></>
+  return <Text>Hello</Text>
 }
 
 export { Home }
